@@ -1,0 +1,54 @@
+/* General styles for the form */
+.signup-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .signup-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Add specific styling for phone number field */
+  .signup-form input[type="tel"] {
+   
+    margin: 0 auto 10px; /* Adjust margin for alignment */
+    display: block;
+  }
+  
+  .signup-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .signup-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Error message styles */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+  }
+  

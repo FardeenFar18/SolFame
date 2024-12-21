@@ -1,0 +1,98 @@
+/* ViewBookings.css */
+
+/* Main container styling */
+.view-bookings {
+    font-family: 'Verdana', sans-serif;
+    padding: 30px;
+    background: linear-gradient(135deg, #00695c, #ffd700);
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Heading styling */
+  .view-bookings h2 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  /* Loader message */
+  .view-bookings p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #ffffff;
+    font-style: italic;
+  }
+  
+  /* Bookings list container */
+  .bookings-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-evenly;
+  }
+  
+  /* Individual booking card */
+  .booking-card {
+    background-color: #00695c;
+    border-radius: 12px;
+    padding: 20px;
+    width: 280px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    text-align: left;
+    color: #ffffff;
+  }
+  
+  /* Hover effect for booking cards */
+  .booking-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Booking title styling */
+  .booking-card h3 {
+    font-size: 1.8rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  /* Booking details */
+  .booking-card p {
+    font-size: 1rem;
+    margin: 8px 0;
+    color: #ffffff;
+  }
+  
+  /* Button for editing */
+  .booking-card button {
+    background-color: #ffd700; /* Gold */
+    color: #00695c;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+  }
+  
+  /* Button hover effect */
+  .booking-card button:hover {
+    background-color: #c79f00; /* Darker gold */
+  }
+  
+  /* Empty state message */
+  .view-bookings .no-bookings {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #ffd700;
+  }
+  
