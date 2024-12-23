@@ -1,125 +1,134 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2'; // Import SweetAlert2
+import { useLocation, useNavigate } from 'react-router-dom';
 import './SignupForm.css';
 
-const SignupForm = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [error, setError] = useState('');
+const Signup = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [address, setAddress] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const sendOtp = async () => {
-    if (!formData.email) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Email',
-        text: 'Please enter your email address before requesting an OTP.',
-      });
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Password Mismatch',
-        text: 'Passwords do not match! Please try again.',
-      });
-      return;
-    }
-
+  const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5001/auth/sendOtp', {
-        email: formData.email,
+      // Send user data to backend (without storing it initially)
+      const response = await axios.post('http://localhost:5000/auth/signup', {
+        name,
+        email,
+        password,
+        confirmPassword,
+        address,
+        mobileNumber,
       });
-
+      // Show success alert using Swal
       Swal.fire({
         icon: 'success',
-        title: 'OTP Sent',
-        text: 'OTP has been sent to your email address!',
+        title: 'Signup Submitted',
+        text: response.data.message,
       });
-
-      // Redirect to OTP verification page
-      navigate('/verify-otp', { state: { email: formData.email, password: formData.password } });
-    } catch (err) {
-      setError(err.response ? err.response.data.message : 'Error sending OTP.');
+      setIsOtpSent(true); // Show OTP input form
+    } catch (error) {
+      // Show error alert using Swal
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Error sending OTP. Please try again.',
+        title: 'Signup Failed',
+        text: error.response?.data?.message || 'Error during signup',
+      });
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      // Send OTP verification request to backend
+      const response = await axios.post('http://localhost:5000/auth/verify-otp', {
+        email,
+        otp,
+      });
+      // Show success alert using Swal
+      Swal.fire({
+        icon: 'success',
+        title: 'OTP Verified',
+        text: response.data.message,
+      });
+      setIsOtpVerified(true); // OTP is verified, now store user data
+      navigate("/login")
+    } catch (error) {
+      // Show error alert using Swal
+      Swal.fire({
+        icon: 'error',
+        title: 'OTP Verification Failed',
+        text: error.response?.data?.message || 'Error during OTP verification',
       });
     }
   };
 
   return (
-    <div className="signup-form">
-      <h2>Sign Up</h2>
-      {error && <p className="error-message">{error}</p>}
-      <form>
+    <div className='signup-form'>
+      <h2>Signup</h2>
+      <div>
         <input
           type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
+          placeholder="Enter your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <input
           type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-          required
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          required
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Confirm your password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <input
           type="text"
-          name="address"
-          placeholder="Address"
-          value={formData.address}
-          onChange={handleChange}
-          required
+          placeholder="Enter your address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
         />
         <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+          type="text"
+          placeholder="Enter your mobile number"
+          value={mobileNumber}
+          onChange={(e) => setMobileNumber(e.target.value)}
         />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
-        <button type="button" onClick={sendOtp}>
-          Send OTP
+        <button onClick={handleSignup} disabled={isOtpSent}>
+          Signup
         </button>
-      </form>
+      </div>
+
+      {isOtpSent && (
+        <div>
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+          />
+          <button onClick={handleVerifyOtp} disabled={isOtpVerified}>
+            Verify OTP
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default SignupForm;
+export default Signup;

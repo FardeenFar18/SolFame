@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -6,8 +7,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // To store error message
   const [loading, setLoading] = useState(false); // To manage loading state
-
-  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,22 +31,43 @@ const LoginPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-    
 
         // Store name and email in sessionStorage
         sessionStorage.setItem("username", data.name);
         sessionStorage.setItem("email", data.email);
 
-        alert("login successful ",data.name);
-
-        // Redirect to dashboard
-        window.location.href = "/dashboard";
+        // SweetAlert2 success alert
+        Swal.fire({
+          title: "Login Successful!",
+          text: `Welcome, ${data.name}!`,
+          icon: "success",
+          confirmButtonText: "Continue",
+        }).then(() => {
+          // Redirect to dashboard
+          window.location.href = "/dashboard";
+        });
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Login failed, please try again");
+
+        // SweetAlert2 error alert
+        Swal.fire({
+          title: "Login Failed",
+          text: errorData.message || "Please try again.",
+          icon: "error",
+          confirmButtonText: "Okay",
+        });
       }
     } catch (error) {
       setError("An error occurred while logging in. Please try again.");
+
+      // SweetAlert2 error alert for unexpected errors
+      Swal.fire({
+        title: "Error",
+        text: "An error occurred while logging in. Please try again.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
       console.error(error);
     } finally {
       setLoading(false);
@@ -79,7 +99,7 @@ const LoginPage = () => {
           required
         />
 
-        <button type="submit1" disabled={loading}>
+        <button type="submits" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
 
