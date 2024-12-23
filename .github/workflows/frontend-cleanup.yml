@@ -1,0 +1,28 @@
+name: Frontend Cleanup Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on pushes to the `main` branch
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Remove node_modules
+        run: |
+          echo "Cleaning up node_modules folder..."
+          rm -rf node_modules
+          echo "node_modules folder removed."
