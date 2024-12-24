@@ -1,7 +1,29 @@
-FROM node:14.14.0-alpine
-WORKDIR /app
-COPY ./package.json ./
-RUN npm i --force
-VOLUME [ "/app/node_modules" ]
+# Use the official Node.js image as the base
+FROM node:18 AS build
 
-CMD ["npm", "run", "start"]
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies (npm ci for exact lock file installation)
+RUN npm ci --legacy-peer-deps
+
+# Copy the source code to the container
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Use a lightweight web server for production
+FROM nginx:1.25
+
+# Copy built React app to Nginx directory
+COPY --from=build /usr/src/app/build /usr/share/nginx/html
+
+# Expose port 80 for the web server
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

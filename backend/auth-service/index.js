@@ -12,11 +12,11 @@ const app = express();
 
 // PostgreSQL connection using your provided configuration
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "mahal_booking",
-  password: "Fardeen@1821",
-  port: 5432,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
 });
 
 // Middleware
@@ -29,8 +29,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "fardeen.i@ideelit.com",
-    pass: "Fardeen@1821", // Ensure your Zoho account password is correct
+    user: process.env.EMAIL_USER,  // Use environment variable
+    pass: process.env.EMAIL_PASS,  // Use environment variable
   },
 });
 
@@ -42,7 +42,7 @@ const generateOTP = () => {
 // Send OTP Email
 const sendOTP = (email, otp) => {
   const mailOptions = {
-    from: 'fardeen.i@ideelit.com',
+    from: process.env.EMAIL_USER, // Use environment variable
     to: email,
     subject: 'OTP for Signup',
     text: `Your OTP for signup is: ${otp}`,
@@ -58,7 +58,7 @@ const sendOTP = (email, otp) => {
 };
 
 // Endpoint to handle user signup (no OTP initially)
-app.post('/auth/signup', async (req, res, next) => {
+app.post('/auth/signup', async (req, res) => {
   const { name, email, password, confirmPassword, address, mobileNumber } = req.body;
 
   try {
@@ -94,12 +94,13 @@ app.post('/auth/signup', async (req, res, next) => {
 
     res.status(200).json({ message: 'Signup successful. OTP has been sent to your email.' });
   } catch (err) {
-    next(err); // Pass the error to the error handler
+    console.error(err);
+    res.status(500).json({ message: 'Server error during signup', error: err.message });
   }
 });
 
 // Endpoint to verify OTP and store user data after verification
-app.post('/auth/verify-otp', async (req, res, next) => {
+app.post('/auth/verify-otp', async (req, res) => {
   const { email, otp } = req.body;
 
   try {
@@ -140,7 +141,8 @@ app.post('/auth/verify-otp', async (req, res, next) => {
 
     res.status(200).json({ message: 'OTP verified, user data saved, you can now log in' });
   } catch (err) {
-    next(err); // Pass the error to the error handler
+    console.error(err);
+    res.status(500).json({ message: 'Server error during OTP verification', error: err.message });
   }
 });
 
@@ -173,7 +175,7 @@ app.post('/auth/login', async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error during login', error: err.message });
   }
 });
 
