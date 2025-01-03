@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import './Register.css';
 
 const Register = () => {
   const [upload, setUpload] = useState({
@@ -24,7 +25,6 @@ const Register = () => {
     mahalLocation: '',
     mahalCapacity: '',
   };
-  const [filer, setFiler] = useState(null);
 
   const validationSchema = Yup.object({
     email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -44,62 +44,47 @@ const Register = () => {
 
   const handleRegisterSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
-      // Create FormData object
       const formData = new FormData();
-      const fileIds = [];
-
-      // Append form data
       formData.append('email', values.email);
       formData.append('password', values.password);
       formData.append('mahalName', values.mahalName);
       formData.append('mahalLocation', values.mahalLocation);
       formData.append('mahalCapacity', values.mahalCapacity);
 
-      // Append uploaded files to FormData
       Object.keys(upload).forEach((field) => {
         if (upload[field]) {
           formData.append(field, upload[field]);
         }
       });
 
-      // First, send the files for upload
-      const fileDataResponse = await axios.post('http://localhost:5002/api/upload-file', formData, {
+      const fileUploadResponse = await axios.post('http://localhost:5002/api/upload-file', formData, {
+        timeout: 5000,
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (fileDataResponse.status === 200) {
-        console.log('File data submitted successfully.',fileDataResponse.data);
-        fileDataResponse.data.fileIds.forEach(fileId => fileIds.push(fileId));
-        console.log("73",fileDataResponse.data.fileIds);
+      if (fileUploadResponse.status === 200) {
+        const fileId = fileUploadResponse.data.fileId;
+
+        const registrationData = {
+          email: values.email,
+          password: values.password,
+          mahalName: values.mahalName,
+          mahalLocation: values.mahalLocation,
+          mahalCapacity: values.mahalCapacity,
+          fileId,
+        };
+
+        const registerResponse = await axios.post('http://localhost:5001/auth/register', registrationData);
+
+        if (registerResponse.status === 201) {
+          alert('Registration successful');
+          window.location.reload();
+        } else {
+          setStatus({ error: 'Registration failed.' });
+        }
       } else {
-        console.error('File data submission failed');
         setStatus({ error: 'File upload failed.' });
-        return;
       }
-
-      // Submit the rest of the form data including fileIds
-      const textData = {
-        email: values.email,
-        password: values.password,
-        mahalName: values.mahalName,
-        mahalLocation: values.mahalLocation,
-        mahalCapacity: values.mahalCapacity,
-        fileIds: values.fileIds,
-      };
-      console.log('88',textData);
-
-      const textDataResponse = await axios.post('http://localhost:5001/auth/register', textData);
-
-      if (textDataResponse.status === 200) {
-        console.log('Text data submitted successfully. ID:', textDataResponse.data.id);
-        alert('Form submitted successfully.');
-      } else {
-        console.error('Text data submission failed');
-        setStatus({ error: 'Form submission failed.' });
-        return;
-      }
-
-      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
       setStatus({ error: 'An error occurred.' });
@@ -107,70 +92,85 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register Marriage Mahal</h2>
+    <div className="register-container">
+      <h2 className="heading">Register Marriage Mahal</h2>
 
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleRegisterSubmit}
       >
-        {({ values, isSubmitting, status, touched, errors, setFieldValue }) => (
-          <Form>
-            {status?.error && <p style={{ color: 'red' }}>{status.error}</p>}
-            {status?.success && <p style={{ color: 'green' }}>{status.success}</p>}
+        {({ values, isSubmitting, status, touched, errors }) => (
+          <Form className="register-form">
+            {status?.error && <p className="error-message">{status.error}</p>}
+            {status?.success && <p className="success-message">{status.success}</p>}
 
             {/* Owner Information */}
-            <div>
-              <h3>Owner Information</h3>
-              <div>
-                <Field name="email" type="email" placeholder="Owner Email" />
-                {touched.email && errors.email && <div style={{ color: 'red' }}>{errors.email}</div>}
+            <div className="section">
+              <h3 className="section-heading">Owner Information</h3>
+
+              <div className="input-group">
+                <label htmlFor="email" className="input-label">Owner Email:</label>
+                <Field name="email" type="email" placeholder="Owner Email" className="input" id="email" />
+                {touched.email && errors.email && <div className="error-text">{errors.email}</div>}
               </div>
-              <div>
-                <Field name="password" type="password" placeholder="Password" />
-                {touched.password && errors.password && <div style={{ color: 'red' }}>{errors.password}</div>}
+
+              <div className="input-group">
+                <label htmlFor="password" className="input-label">Password:</label>
+                <Field name="password" type="password" placeholder="Password" className="input" id="password" />
+                {touched.password && errors.password && <div className="error-text">{errors.password}</div>}
               </div>
-              <div>
-                <Field name="confirmPassword" type="password" placeholder="Confirm Password" />
+
+              <div className="input-group">
+                <label htmlFor="confirmPassword" className="input-label">Confirm Password:</label>
+                <Field name="confirmPassword" type="password" placeholder="Confirm Password" className="input" id="confirmPassword" />
                 {touched.confirmPassword && errors.confirmPassword && (
-                  <div style={{ color: 'red' }}>{errors.confirmPassword}</div>
+                  <div className="error-text">{errors.confirmPassword}</div>
                 )}
               </div>
             </div>
 
             {/* Marriage Mahal Information */}
-            <div>
-              <div>
-                <Field name="mahalName" type="text" placeholder="Marriage Mahal Name" />
-                {touched.mahalName && errors.mahalName && <div style={{ color: 'red' }}>{errors.mahalName}</div>}
+            <div className="section">
+              <h3 className="section-heading">Marriage Mahal Information</h3>
+
+              <div className="input-group">
+                <label htmlFor="mahalName" className="input-label">Marriage Mahal Name:</label>
+                <Field name="mahalName" type="text" placeholder="Marriage Mahal Name" className="input" id="mahalName" />
+                {touched.mahalName && errors.mahalName && <div className="error-text">{errors.mahalName}</div>}
               </div>
-              <div>
-                <Field name="mahalLocation" type="text" placeholder="Marriage Mahal Location" />
+
+              <div className="input-group">
+                <label htmlFor="mahalLocation" className="input-label">Marriage Mahal Location:</label>
+                <Field name="mahalLocation" type="text" placeholder="Marriage Mahal Location" className="input" id="mahalLocation" />
                 {touched.mahalLocation && errors.mahalLocation && (
-                  <div style={{ color: 'red' }}>{errors.mahalLocation}</div>
+                  <div className="error-text">{errors.mahalLocation}</div>
                 )}
               </div>
-              <div>
-                <Field name="mahalCapacity" type="number" placeholder="Marriage Mahal Capacity" />
+
+              <div className="input-group">
+                <label htmlFor="mahalCapacity" className="input-label">Marriage Mahal Capacity:</label>
+                <Field name="mahalCapacity" type="number" placeholder="Marriage Mahal Capacity" className="input" id="mahalCapacity" />
                 {touched.mahalCapacity && errors.mahalCapacity && (
-                  <div style={{ color: 'red' }}>{errors.mahalCapacity}</div>
+                  <div className="error-text">{errors.mahalCapacity}</div>
                 )}
               </div>
 
               {/* File Upload for Marriage Mahal Profile */}
-              <div>
-                <label>Marriage Mahal Profile:</label>
+              <div className="file-upload-group">
+                <label htmlFor="marriageMahalProfile" className="file-upload-label">Marriage Mahal Profile:</label>
                 <input
                   type="file"
+                  className="file-upload-input"
                   onChange={(e) => handleFileChange(e, 'marriageMahalProfile')}
+                  id="marriageMahalProfile"
                 />
                 {upload.marriageMahalProfile && (
-                  <p>File selected: {upload.marriageMahalProfile.name}</p>
+                  <p className="file-selected-text">File selected: {upload.marriageMahalProfile.name}</p>
                 )}
               </div>
 
-              {/* File Upload for required certificates */}
+              {/* File Upload for Required Certificates */}
               {[
                 'tradeLicense',
                 'foodLicense',
@@ -180,16 +180,23 @@ const Register = () => {
                 'liquorLicense',
                 'pestControlCertificate',
               ].map((field) => (
-                <div key={field}>
-                  <label>{field.replace(/([A-Z])/g, ' $1').toUpperCase()}:</label>
+                <div key={field} className="file-upload-group">
+                  <label htmlFor={field} className="file-upload-label">
+                    {field.replace(/([A-Z])/g, ' $1').toUpperCase()}:
+                  </label>
                   <input
                     type="file"
+                    className="file-upload-input"
                     onChange={(e) => handleFileChange(e, field)}
+                    id={field}
                   />
+                  {upload[field] && (
+                    <p className="file-selected-text">File selected: {upload[field].name}</p>
+                  )}
                 </div>
               ))}
 
-              <button type="submit" disabled={isSubmitting}>
+              <button type="submit7" className="submit-button" disabled={isSubmitting}>
                 Submit
               </button>
             </div>

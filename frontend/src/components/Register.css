@@ -1,0 +1,105 @@
+/* General Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Courier New', monospace;
+    background-color: #111;
+    color: #fff; /* All text will be white */
+  }
+  
+  .register-container {
+    width: 70%;
+    margin: 60px auto;
+    padding: 50px;
+    background-color: #1b2a34;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    color: #fff; /* Ensure the text inside the container is white */
+  }
+  
+  .heading {
+    font-size: 40px;
+    color: #00bfff; /* Neon Blue */
+    text-align: center;
+    margin-bottom: 35px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+  }
+  
+  .section-heading {
+    font-size: 24px;
+    color: #00ced1; /* Neon Turquoise */
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px #00ced1, 0 0 20px #00ced1;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .input,
+  .file-upload-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #00bfff;
+    border-radius: 10px;
+    background-color: #1b2a34;
+    color: #fff; /* Text inside input is white */
+    display: block; /* Ensures the input fills the container */
+    margin-top: 5px; /* Aligns input vertically with label */
+  }
+  
+  .input:focus,
+  .file-upload-input:focus {
+    outline: none;
+    border-color: #00ced1;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 16px;
+    background-color: #00bfff; /* Neon Blue */
+    color: white; /* Text on button is white */
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-shadow: 0 0 10px #00bfff;
+  }
+  
+  .submit-button:hover {
+    background-color: #1e90ff;
+  }
+  
+  .error-message,
+  .success-message {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .error-message {
+    color: #ff4c4c;
+  }
+  
+  .success-message {
+    color: #4CAF50;
+  }
+  
+  .file-upload-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for file input labels */
+  label {
+    color: #fff; /* White color for all labels */
+    font-size: 16px;
+    display: block; /* Ensures label is on its own line */
+    margin-bottom: 8px; /* Adds space between the label and input */
+  }
+  

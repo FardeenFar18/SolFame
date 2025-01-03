@@ -27,6 +27,8 @@ const pool = new Pool({
 // Middleware
 app.use(cors());  // Allow cross-origin requests from the React front-end
 app.use(bodyParser.json());
+app.use(express.json({ limit: '50mb' }));
+
 
 // Zoho email setup using nodemailer
 const transporter = nodemailer.createTransport({
@@ -184,34 +186,30 @@ app.post('/auth/login', async (req, res) => {
   }
 });
 
+
+
 app.post('/auth/register', async (req, res) => {
-  const { email, password, mahalName, mahalLocation, mahalCapacity, fileIds } = req.body;
+  const { email, password, mahalName, mahalLocation, mahalCapacity, fileId } = req.body;
+  console.log('189', fileId);
 
   try {
-    // First, insert user data into PostgreSQL
-    const result = await pool.query(
-      'INSERT INTO marriage_mahal (email, password, mahal_name, mahal_location, mahal_capacity) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [email, password, mahalName, mahalLocation, mahalCapacity]
+    // Check if the email already exists
+    const existingUser = await pool.query(
+      'SELECT * FROM marriage_mahal_info WHERE email = $1',
+      [email]
     );
-    
-    // Store the file IDs into MongoDB as part of the user's profile (one common ObjectId)
-    const fileUploadData = new fileUpload({
-      marriageMahalProfile: fileIds.marriageMahalProfile,
-      tradeLicense: fileIds.tradeLicense,
-      foodLicense: fileIds.foodLicense,
-      fireSafetyCertificate: fileIds.fireSafetyCertificate,
-      healthSanitationLicense: fileIds.healthSanitationLicense,
-      gstRegistration: fileIds.gstRegistration,
-      liquorLicense: fileIds.liquorLicense,
-      pestControlCertificate: fileIds.pestControlCertificate,
-    });
 
-    const savedFileData = await fileUploadData.save();
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
 
-    // Update PostgreSQL record to associate MongoDB ObjectId with the user
-    await pool.query(
-      'UPDATE marriage_mahal SET mongo_object_id = $1 WHERE id = $2',
-      [savedFileData._id, result.rows[0].id] // Store MongoDB ObjectId here
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+    // Insert the new user into the database
+    const result = await pool.query(
+      'INSERT INTO marriage_mahal_info (email, password, mahal_name, mahal_location, mahal_capacity, fileid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      [email, hashedPassword, mahalName, mahalLocation, mahalCapacity, fileId]
     );
 
     res.status(201).json({ message: 'Registration successful', id: result.rows[0].id });
@@ -220,6 +218,8 @@ app.post('/auth/register', async (req, res) => {
     res.status(500).json({ error: 'Failed to save registration' });
   }
 });
+
+
 
 
 

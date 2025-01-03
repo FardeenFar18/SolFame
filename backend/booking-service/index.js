@@ -10,7 +10,8 @@ const PORT = 5002;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+
 
 // MongoDB Connection
 mongoose.connect("mongodb://localhost:27017/booking-service", {
@@ -82,40 +83,36 @@ app.post('/api/upload-file', (req, res) => {
       return res.status(400).json({ error: 'Error uploading files' });
     }
 
-    console.log("Parsed files object:", files); // Add this to check the file structure
-
     try {
       const fileMetadata = [];
 
-      // Ensure we're accessing files correctly, checking if files are in an array or object
+      // Ensure we're accessing files correctly
       const filePaths = files ? Object.values(files).flat() : [];
 
       // Collect file metadata
       for (const file of filePaths) {
-        console.log('File:', file); // Log each file object to debug
-
-        if (file && file.filepath) {  // Make sure the file object has necessary properties
+        if (file && file.filepath) {
           fileMetadata.push({
-            fileName: file.originalFilename, // Check if it's 'originalFilename' or another key
-            filePath: file.filepath,          // Ensure 'filepath' or 'path' is used correctly
+            fileName: file.originalFilename,
+            filePath: file.filepath,
             fileSize: file.size,
           });
-        } else {
-          console.log('File missing expected properties');
         }
       }
 
       // Create a new FileGroup document with all file metadata
-      const fileGroup = new FileGroup({
-        files: fileMetadata,  // Store all file metadata in one document
-      });
-
+      const fileGroup = new FileGroup({ files: fileMetadata });
       const savedFileGroup = await fileGroup.save();
 
-      // Send the response with the FileGroup ID
+      // Return metadata or unique identifiers to the client
       res.status(200).json({
         message: 'Files uploaded successfully',
-        fileGroupId: savedFileGroup._id,  // Single ObjectId for all files
+        fileId: savedFileGroup._id, // Return the MongoDB ObjectId of the saved FileGroup
+        fileMetadata: fileMetadata.map((file) => ({
+          fileName: file.fileName,
+          filePath: file.filePath,
+          fileSize: file.fileSize,
+        })),
       });
 
     } catch (error) {
@@ -124,6 +121,7 @@ app.post('/api/upload-file', (req, res) => {
     }
   });
 });
+
 
 
 
