@@ -1,10 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Pool } = require('pg');
+const { Pool, Client } = require('pg');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { check, validationResult } = require('express-validator');
+const { ObjectId } = require('mongodb');
+
 
 dotenv.config();
 
@@ -12,12 +15,14 @@ const app = express();
 
 // PostgreSQL connection using your provided configuration
 const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT,
+  user: "postgres",
+  host: "localhost",
+  database: "mahal_booking",
+  password: "Fardeen@1821",
+  port: 5432,
 });
+
+
 
 // Middleware
 app.use(cors());  // Allow cross-origin requests from the React front-end
@@ -178,6 +183,48 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ message: 'Server error during login', error: err.message });
   }
 });
+
+app.post('/auth/register', async (req, res) => {
+  const { email, password, mahalName, mahalLocation, mahalCapacity, fileIds } = req.body;
+
+  try {
+    // First, insert user data into PostgreSQL
+    const result = await pool.query(
+      'INSERT INTO marriage_mahal (email, password, mahal_name, mahal_location, mahal_capacity) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+      [email, password, mahalName, mahalLocation, mahalCapacity]
+    );
+    
+    // Store the file IDs into MongoDB as part of the user's profile (one common ObjectId)
+    const fileUploadData = new fileUpload({
+      marriageMahalProfile: fileIds.marriageMahalProfile,
+      tradeLicense: fileIds.tradeLicense,
+      foodLicense: fileIds.foodLicense,
+      fireSafetyCertificate: fileIds.fireSafetyCertificate,
+      healthSanitationLicense: fileIds.healthSanitationLicense,
+      gstRegistration: fileIds.gstRegistration,
+      liquorLicense: fileIds.liquorLicense,
+      pestControlCertificate: fileIds.pestControlCertificate,
+    });
+
+    const savedFileData = await fileUploadData.save();
+
+    // Update PostgreSQL record to associate MongoDB ObjectId with the user
+    await pool.query(
+      'UPDATE marriage_mahal SET mongo_object_id = $1 WHERE id = $2',
+      [savedFileData._id, result.rows[0].id] // Store MongoDB ObjectId here
+    );
+
+    res.status(201).json({ message: 'Registration successful', id: result.rows[0].id });
+  } catch (error) {
+    console.error('Error saving registration:', error);
+    res.status(500).json({ error: 'Failed to save registration' });
+  }
+});
+
+
+
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

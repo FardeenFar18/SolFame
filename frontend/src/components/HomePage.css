@@ -192,3 +192,16 @@ p {
   margin: 0;
   font-size: 0.9rem;
 }
+
+/* Add this to your 'HomePage.css' */
+.register-owner-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.register-owner-link:hover {
+  color: #0056b3;
+}

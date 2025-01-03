@@ -8,6 +8,7 @@
     "axos": "^0.0.1",
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
+    "formik": "^2.4.6",
     "react": "^19.0.0",
     "react-datepicker": "^7.5.0",
     "react-dom": "^19.0.0",
@@ -16,7 +17,8 @@
     "react-router-dom": "^7.0.2",
     "react-scripts": "5.0.1",
     "sweetalert2": "^11.15.2",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "yup": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",

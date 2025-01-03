@@ -10,6 +10,7 @@ import AdvancedBookingForm from "./components/CreateBooking";
 import ViewBookings from "./components/ViewBookings";
 import AccountSettings from "./components/Settings";
 import VerifyOtp from "./components/OTP-Verify";
+import Register from "./components/Register";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/ViewBooking" element={<ViewBookings />} />
         <Route path="/Settings" element={<AccountSettings/>} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );

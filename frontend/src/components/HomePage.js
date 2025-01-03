@@ -1,7 +1,8 @@
+// src/pages/HomePage.js
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
-import wideRangeImage from '../assets/wide.webp'; // Import the image
+import wideRangeImage from '../assets/wide.webp';
 import TransparentPricingImage from '../assets/pricing.webp';
 import Support from '../assets/24X7.webp';
 import './HomePage.css';
@@ -28,7 +29,9 @@ const HomePage = () => {
           <div className="hero-content">
             <h1>Discover Your Perfect Venue</h1>
             <p>Effortlessly book the ideal mahal for every celebration!</p>
-            <Link to="/login" className="hero-btn primary-btn">Get Started</Link>
+            <Link to="/login" className="hero-btn primary-btn">
+              Get Started
+            </Link>
           </div>
         </div>
       </div>
@@ -37,6 +40,7 @@ const HomePage = () => {
       <section className="filter-section">
         <h2>Find Your Ideal Wedding Mahal</h2>
         <form className="filter-form">
+          {/* Filter options for location, event type, capacity, price range, and decor style */}
           <div className="filter-option">
             <label htmlFor="location">Location:</label>
             <select id="location" value={location} onChange={handleLocationChange}>
@@ -91,7 +95,7 @@ const HomePage = () => {
             </select>
           </div>
 
-          <button type="submits3" className="filter-btn">Apply Filters</button>
+          <button type="submit" className="filter-btn">Apply Filters</button>
         </form>
       </section>
 
@@ -100,26 +104,29 @@ const HomePage = () => {
         <h2>Our Key Features</h2>
         <div className="features">
           <div className="feature-card">
-           <img src={wideRangeImage} alt="Wide Range" />
-          <h3>Wide Range of Venues</h3>
-          <p>Find venues tailored to every style and budget.</p>
+            <img src={wideRangeImage} alt="Wide Range" />
+            <h3>Wide Range of Venues</h3>
+            <p>Find venues tailored to every style and budget.</p>
           </div>
           <div className="feature-card">
-          <img src={TransparentPricingImage}  alt="Pricing" />
+            <img src={TransparentPricingImage} alt="Pricing" />
             <h3>Transparent Pricing</h3>
             <p>Clear, straightforward pricing with no hidden fees.</p>
           </div>
           <div className="feature-card">
-          <img src={Support}  alt="Support" />
+            <img src={Support} alt="Support" />
             <h3>24/7 Support</h3>
             <p>Always available to assist with your booking needs.</p>
           </div>
         </div>
       </section>
 
-      {/* Footer Section */}
+      {/* Footer Section with Register Link */}
       <footer className="homepage-footer">
         <p>&copy; 2024 Mahal Booking. All rights reserved.</p>
+        <Link to="/register" className="register-owner-link">
+          Register as an Owner
+        </Link>
       </footer>
     </div>
   );
