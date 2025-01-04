@@ -21,21 +21,22 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
-        method: "POST",
+      // Try user login first
+      const response = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
         const data = await response.json();
-
+      
         // Store name and email in sessionStorage
         sessionStorage.setItem("username", data.name);
         sessionStorage.setItem("email", data.email);
-
+      
         // SweetAlert2 success alert
         Swal.fire({
           title: "Login Successful!",
@@ -43,21 +44,48 @@ const LoginPage = () => {
           icon: "success",
           confirmButtonText: "Continue",
         }).then(() => {
-          // Redirect to dashboard
-          window.location.href = "/dashboard";
+          window.location.replace("/dashboard");
         });
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Login failed, please try again");
-
-        // SweetAlert2 error alert
-        Swal.fire({
-          title: "Login Failed",
-          text: errorData.message || "Please try again.",
-          icon: "error",
-          confirmButtonText: "Okay",
+        // If user login fails, try owner login
+        const ownerResponse = await fetch("http://localhost:5000/auth/ownerlogin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         });
+      
+        if (ownerResponse.ok) {
+          const data = await ownerResponse.json();
+      
+          // Store name and email in sessionStorage
+          sessionStorage.setItem("username", data.name);
+          sessionStorage.setItem("email", data.email);
+      
+          // SweetAlert2 success alert for owner
+          Swal.fire({
+            title: "Login Successful!",
+            text: `Welcome, ${data.name}!`,
+            icon: "success",
+            confirmButtonText: "Continue",
+          }).then(() => {
+            window.location.replace("/owner-dashboard");
+          });
+        } else {
+          const errorData = await ownerResponse.json();
+          setError(errorData.message || "Login failed, please try again");
+      
+          // SweetAlert2 error alert
+          Swal.fire({
+            title: "Login Failed",
+            text: errorData.message || "Please try again.",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
+        }
       }
+      
     } catch (error) {
       setError("An error occurred while logging in. Please try again.");
 
@@ -99,7 +127,7 @@ const LoginPage = () => {
           required
         />
 
-        <button type="submits" disabled={loading}>
+        <button type="submits4" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
 

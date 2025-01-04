@@ -186,6 +186,37 @@ app.post('/auth/login', async (req, res) => {
   }
 });
 
+app.post('/auth/ownerlogin', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Query the owners table (adjust table and column names as necessary)
+    const owner = await pool.query('SELECT * FROM marriage_mahal_info WHERE email = $1', [email]);
+
+    if (owner.rows.length === 0) {
+      return res.status(400).json({ message: 'Owner not found' });
+    }
+
+    const ownerData = owner.rows[0];
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = bcrypt.compareSync(password, ownerData.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      email: ownerData.email,
+      name: ownerData.mahal_name, // Assuming `mahal_name` is the owner's name
+      role: 'owner', // Add role for owners
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error during login', error: err.message });
+  }
+});
 
 
 app.post('/auth/register', async (req, res) => {

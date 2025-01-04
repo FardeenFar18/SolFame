@@ -11,6 +11,7 @@ import ViewBookings from "./components/ViewBookings";
 import AccountSettings from "./components/Settings";
 import VerifyOtp from "./components/OTP-Verify";
 import Register from "./components/Register";
+import OwnerDashboard from "./components/OwnerDashboard";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/Settings" element={<AccountSettings/>} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/owner-dashboard" element={<OwnerDashboard />} />
       </Routes>
     </Router>
   );

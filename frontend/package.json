@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-google-maps/api": "^2.20.3",
+    "antd": "^5.22.7",
     "axios": "^1.7.9",
     "axos": "^0.0.1",
     "cra-template": "1.2.0",

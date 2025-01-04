@@ -95,7 +95,7 @@ const HomePage = () => {
             </select>
           </div>
 
-          <button type="submit" className="filter-btn">Apply Filters</button>
+          <button type="submits2" className="filter-btn">Apply Filters</button>
         </form>
       </section>
 
