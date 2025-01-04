@@ -12,6 +12,7 @@ const OwnerDashboard = () => {
   const [revenue, setRevenue] = useState(0);
 
   useEffect(() => {
+    
     // Fetch initial data (slots, bookings, etc.)
     axios.get('http://localhost:5000/api/slots')
       .then(response => setSlots(response.data))
