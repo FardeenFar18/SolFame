@@ -6,7 +6,7 @@ const PORT = 5000;
 
 
 app.use(cors({
-  origin: 'http://localhost:3002', // allow requests from your frontend
+  origin: 'http://localhost:3000', // allow requests from your frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // specify allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // specify allowed headers
 }));

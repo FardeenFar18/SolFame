@@ -32,12 +32,12 @@ app.use(express.json({ limit: '50mb' }));
 
 // Zoho email setup using nodemailer
 const transporter = nodemailer.createTransport({
-  host: "smtp.zoho.com",
-  port: 465,
-  secure: true,
+ secure:true,
+ host:'smtp.gmail.com',
+ port:465,
   auth: {
-    user: process.env.EMAIL_USER,  // Use environment variable
-    pass: process.env.EMAIL_PASS,  // Use environment variable
+    user: 'solfame63@gmail.com',  // Gmail address
+    pass: 'cmmaroeculnhfpwg',  // App password (not the Gmail account password)
   },
 });
 
@@ -49,7 +49,7 @@ const generateOTP = () => {
 // Send OTP Email
 const sendOTP = (email, otp) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Use environment variable
+    from: 'solfame63@gmail.com',
     to: email,
     subject: 'OTP for Signup',
     text: `Your OTP for signup is: ${otp}`,
@@ -63,7 +63,6 @@ const sendOTP = (email, otp) => {
     }
   });
 };
-
 // Endpoint to handle user signup (no OTP initially)
 app.post('/auth/signup', async (req, res) => {
   const { name, email, password, confirmPassword, address, mobileNumber } = req.body;
