@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { IncomingForm } = require('formidable');
+const fs = require("fs");
 
 const path = require("path");
 
@@ -71,6 +72,8 @@ const FileGroup = mongoose.model('FileGroup', fileGroupSchema);
 
 
 
+
+// Update the `/api/upload-file` endpoint
 app.post('/api/upload-file', (req, res) => {
   const form = new IncomingForm({
     multiples: true,
@@ -89,12 +92,15 @@ app.post('/api/upload-file', (req, res) => {
       // Ensure we're accessing files correctly
       const filePaths = files ? Object.values(files).flat() : [];
 
-      // Collect file metadata
       for (const file of filePaths) {
         if (file && file.filepath) {
+          // Convert fileName and filePath to Base64
+          const base64FileName = Buffer.from(file.originalFilename).toString("base64");
+          const base64FilePath = Buffer.from(file.filepath).toString("base64");
+
           fileMetadata.push({
-            fileName: file.originalFilename,
-            filePath: file.filepath,
+            fileName: base64FileName, // Store Base64-encoded fileName
+            filePath: base64FilePath, // Store Base64-encoded filePath
             fileSize: file.size,
           });
         }
@@ -108,11 +114,7 @@ app.post('/api/upload-file', (req, res) => {
       res.status(200).json({
         message: 'Files uploaded successfully',
         fileId: savedFileGroup._id, // Return the MongoDB ObjectId of the saved FileGroup
-        fileMetadata: fileMetadata.map((file) => ({
-          fileName: file.fileName,
-          filePath: file.filePath,
-          fileSize: file.fileSize,
-        })),
+        fileMetadata, // Include the Base64-converted file metadata in the response
       });
 
     } catch (error) {
@@ -121,7 +123,6 @@ app.post('/api/upload-file', (req, res) => {
     }
   });
 });
-
 
 
 
