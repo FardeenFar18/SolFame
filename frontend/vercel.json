@@ -1,0 +1,9 @@
+{
+    "build": {
+      "env": {
+        "NODE_ENV": "production",
+        "VERCEL_CACHE": "1"
+      }
+    }
+  }
+  
