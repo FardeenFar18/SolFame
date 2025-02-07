@@ -20,7 +20,9 @@
     "styled-components": "^6.1.13",
     "sweetalert2": "^11.15.2",
     "web-vitals": "^4.2.4",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "homepage": "."
+
   },
   "scripts": {
     "start": "react-scripts start",
