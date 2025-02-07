@@ -12,6 +12,7 @@ import AccountSettings from "./components/Settings";
 import VerifyOtp from "./components/OTP-Verify";
 import Register from "./components/Register";
 import OwnerDashboard from "./components/OwnerDashboard";
+import EventManagement from "./components/EventManagement";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/register" element={<Register />} />
         <Route path="/owner-dashboard" element={<OwnerDashboard />} />
+        <Route path="/Event-Management" element={<EventManagement />} />
       </Routes>
     </Router>
   );
